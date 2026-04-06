@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamu Başvuru Sistemi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🏛️ Kamu Başvuru Merkezi</h1>
+
+        <div class="card">
+            <h2>Sisteme Giriş</h2>
+            <input type="text" id="tckn" placeholder="T.C. Kimlik No">
+            <input type="password" id="password" placeholder="Şifre">
+            <button onclick="login()">Giriş Yap</button>
+        </div>
+
+        <div class="card">
+            <h2>Yeni Başvuru Oluştur</h2>
+            <input type="text" id="title" placeholder="Başvuru Konusu">
+            <textarea id="description" placeholder="Açıklama ve talebiniz..."></textarea>
+            <button class="btn-success" onclick="createApplication()">Başvuruyu İlet</button>
+        </div>
+
+        <div class="card">
+            <h2>Güncel Başvurular</h2>
+            <button class="btn-outline" onclick="getApplications()">Listeyi Yenile</button>
+            <div id="apps-container">
+                </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

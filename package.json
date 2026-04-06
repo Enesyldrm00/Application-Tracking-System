@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "dotenv": "^17.4.1",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14",
+    "pg": "^8.20.0"
+  },
+  "name": "application-tracking-system",
+  "version": "1.0.0",
+  "description": "useful tracking system",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "Tracking"
+  ],
+  "author": "Muhammed Enes Yıldırım",
+  "license": "ISC"
+}
