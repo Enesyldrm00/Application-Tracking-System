@@ -31,7 +31,41 @@ async function login() {
         alert("Sunucuya ulaşılamıyor. Backend açık mı?");
     }
 }
+async function register() {
+    const tckn = document.getElementById('reg-tckn').value;
+    const ad_soyad = document.getElementById('reg-name').value;
+    const sifre_hash = document.getElementById('reg-password').value;
 
+    // Basit bir kontrol
+    if (!tckn || !ad_soyad || !sifre_hash) {
+        alert("Lütfen tüm alanları doldurun!");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/users/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                tckn: tckn,
+                ad_soyad: ad_soyad,
+                sifre_hash: sifre_hash // Backend'de Bcrypt bunu karşılayacak
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert("Kayıt başarılı! Şimdi giriş yapabilirsiniz.");
+           
+        } else {
+            alert("Hata: " + data.message);
+        }
+    } catch (err) {
+        console.error("Kayıt hatası:", err);
+        
+    }
+}
 // 2. Yeni Başvuru Gönderme
 async function createApplication() {
     if(!userToken) {
@@ -81,7 +115,7 @@ async function getApplications() {
         
         const applications = await response.json();
         const container = document.getElementById('apps-container');
-        container.innerHTML = ""; // Önce mevcut listeyi temizle
+        container.innerHTML = ""; 
 
         if(applications.length === 0) {
             container.innerHTML = "<p>Henüz başvuru bulunmuyor.</p>";

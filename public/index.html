@@ -17,7 +17,16 @@
             <input type="password" id="password" placeholder="Şifre">
             <button onclick="login()">Giriş Yap</button>
         </div>
-
+        <div class="card" id="register-card">
+    <h2>Yeni Kayıt Oluştur</h2>
+    <input type="text" id="reg-tckn" placeholder="T.C. Kimlik No (11 Hane)" maxlength="11">
+    <input type="text" id="reg-name" placeholder="Ad Soyad">
+    <input type="password" id="reg-password" placeholder="Şifre Belirleyin">
+    <button class="btn-outline" onclick="register()">Kayıt Ol</button>
+    <p style="font-size: 0.8rem; margin-top: 10px; color: #666;">
+        Zaten hesabınız var mı? <a href="#" onclick="showLogin()">Giriş Yap</a>
+    </p>
+</div>
         <div class="card">
             <h2>Yeni Başvuru Oluştur</h2>
             <input type="text" id="title" placeholder="Başvuru Konusu">
