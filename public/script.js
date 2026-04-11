@@ -1,29 +1,31 @@
-// Backend API adresin (Kendi bilgisayarında 3000 portunda çalıştığını varsayıyoruz)
+
 const API_URL = "http://localhost:3000/api"; 
-let userToken = ""; // Giriş yapınca JWT token buraya kaydedilecek
+
 
 // 1. Sisteme Giriş Yapma (Login)
 async function login() {
     const tckn = document.getElementById('tckn').value;
-    const password = document.getElementById('password').value;
+    const sifre_hash = document.getElementById('sifre_hash').value;
 
-    if(!tckn || !password) {
+    if(!tckn || !sifre_hash) {
         alert("Lütfen T.C. Kimlik ve Şifre girin!");
         return;
     }
 
     try {
-        const response = await fetch(`${API_URL}/auth/login`, {
+        const response = await fetch(`/api/users/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tckn, password })
+            body: JSON.stringify({ tckn : tckn, sifre_hash : sifre_hash })
         });
 
         const data = await response.json();
 
         if (response.ok) {
-            userToken = data.token;
+         localStorage.setItem('token', data.token);// gelen tokeni localstorage kaydeder,kolayca ulaşmak için
             alert("✅ Sisteme başarıyla giriş yapıldı!");
+          document.getElementById('tckn').value = "✅ TC Doğrulandı!";
+          document.getElementById('sifre_hash').value = "";
         } else {
             alert("❌ Giriş Başarısız: " + data.message);
         }
@@ -57,7 +59,9 @@ async function register() {
 
         if (response.ok) {
             alert("Kayıt başarılı! Şimdi giriş yapabilirsiniz.");
-           
+           document.getElementById('reg-tckn').value = ""; //kayıt yapınca inputları temizlesin diye.
+           document.getElementById('reg-name').value = "";
+           document.getElementById('reg-password').value = "";
         } else {
             alert("Hata: " + data.message);
         }
@@ -68,22 +72,24 @@ async function register() {
 }
 // 2. Yeni Başvuru Gönderme
 async function createApplication() {
-    if(!userToken) {
+     const token = localStorage.getItem('token');
+    if(!token) {
         alert("Önce giriş yapmalısınız!");
         return;
     }
 
-    const title = document.getElementById('title').value;
-    const description = document.getElementById('description').value;
+    const baslik = document.getElementById('title').value;
+    const icerik = document.getElementById('description').value;
 
     try {
-        const response = await fetch(`${API_URL}/applications`, {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`/send/applications/create`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userToken}` // Token ile yetki kontrolü
+                'Authorization': `Bearer ${token}` // Token ile yetki kontrolü
             },
-            body: JSON.stringify({ title, description })
+            body: JSON.stringify({ baslik, icerik })
         });
 
         if (response.ok) {
