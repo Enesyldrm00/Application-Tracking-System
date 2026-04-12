@@ -189,8 +189,8 @@ async function getAllApplications() {
             <p>Durum: <strong>${app.durum}</strong></p>
             
             <div class="actions">
-                <button class="btn-onay" onclick="updateStatus(${app.id}, 'Onaylandı')">✅ Onayla</button>
-                <button class="btn-red" onclick="updateStatus(${app.id}, 'Reddedildi')">❌ Reddet</button>
+                <button class="btn-onay" onclick="updateStatus(${app.id}, 'onaylandi')">✅ Onayla</button>
+                <button class="btn-red" onclick="updateStatus(${app.id}, 'reddedildi')">❌ Reddet</button>
             </div>
         </div>
     `;
@@ -199,11 +199,11 @@ async function getAllApplications() {
         alert("Veriler çekilemedi.");
     }
 }
-async function updateStatus(appId, newStatus) {
+async function updateStatus(id, newStatus) {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await fetch(`http://localhost:3000/send/applications/update/${appId}`, {
+        const response = await fetch(`http://localhost:3000/send/applications/update/${id}`, {
             method: 'PATCH', 
             headers: {
                 'Content-Type': 'application/json',
@@ -215,8 +215,8 @@ async function updateStatus(appId, newStatus) {
         const result = await response.json();
 
         if (result.success) {
-            alert("Durum güncellendi usta!");
-            getApplications(); // Listeyi yenile ki değişiklik ekrana yansısın
+            alert("Durum güncellendi !");
+            getApplications(); 
         } else {
             alert("Hata: " + result.message);
         }

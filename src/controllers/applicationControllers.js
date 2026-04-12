@@ -55,7 +55,28 @@ const adminGetApplication = async (req,res) => {
     res.status(500).json({ error: "Sunucu hatası" });
   }
 };
-   
+  const updateApplication = async (req,res) =>{
+    const { id } = req.params;
+    const { durum } = req.body;
+      try {
+        const result = await pool.query(`UPDATE basvurular SET durum = $1 WHERE id = $2 RETURNING *`,[durum,id]);
+        if(!result?.rows || result.rows.length === 0){
+          return res.status(404).json({success:false,message:"Basvuru bulunamadı"});
+        }
+       return res.status(200).json({
+      success: true,
+      message: "Basvurulu güncellendi",
+      data: result.rows,
+    });
+      } catch (error) {
+         console.error("HATA OLUŞTU:", error.message);
+    res.status(500).json({ error: "Sunucu hatası" });
+      }
+
+
+
+
+  }
 
 
 
@@ -63,4 +84,4 @@ const adminGetApplication = async (req,res) => {
 
 
 
-module.exports = { createApplication, usersGetApplication,adminGetApplication };
+module.exports = { createApplication, usersGetApplication,adminGetApplication,updateApplication};
