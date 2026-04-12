@@ -4,11 +4,11 @@ const jwt = require("jsonwebtoken");
 
 const createApplication = async (req, res) => {
   const { baslik, icerik } = req.body;
-  const vatandas_id = req.user.id;//req.user bilgisi authMiddleware dan geliyo
+  const vatandas_id = req.user.id; //req.user bilgisi authMiddleware dan geliyo
   try {
     const result = await pool.query(
       'INSERT INTO "basvurular" (baslik ,icerik,vatandas_id) VALUES ($1,$2,$3) RETURNING * ',
-      [baslik, icerik,  vatandas_id],
+      [baslik, icerik, vatandas_id],
     );
     res.status(201).json({
       success: true,
@@ -21,4 +21,46 @@ const createApplication = async (req, res) => {
   }
 };
 
-module.exports = { createApplication };
+const usersGetApplication = async (req, res) => {
+  const vatandas_id = req.user.id;
+  try {
+    const result = await pool.query(
+      `SELECT baslik,icerik,durum FROM basvurular WHERE vatandas_id = $1`,
+      [vatandas_id],
+    );
+    res.status(201).json({
+      success: true,
+      message: "Basvurular Listelendi",
+      data: result.rows,
+    });
+  } catch (error) {
+    console.error("HATA OLUŞTU:", error.message);
+    res.status(500).json({ error: "Sunucu hatası" });
+  }
+};
+
+const adminGetApplication = async (req,res) => {
+  try {
+    const result = await pool.query(
+      `SELECT b.id,k.ad_soyad,b.baslik,b.icerik,b.durum FROM basvurular b JOIN kullanicilar k ON k.id = b.vatandas_id 
+       ORDER BY b.id DESC `
+    );
+    res.status(200).json({
+      success: true,
+      message: "Basvurular Listelendi",
+      data: result.rows,
+    });
+  } catch (error) {
+    console.error("HATA OLUŞTU:", error.message);
+    res.status(500).json({ error: "Sunucu hatası" });
+  }
+};
+   
+
+
+
+
+
+
+
+module.exports = { createApplication, usersGetApplication,adminGetApplication };

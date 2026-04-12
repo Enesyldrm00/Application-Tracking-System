@@ -1,4 +1,5 @@
 
+
 const API_URL = "http://localhost:3000/api"; 
 
 
@@ -109,20 +110,26 @@ async function createApplication() {
 
 // 3. Başvuruları Ekrana Getirme
 async function getApplications() {
-    if(!userToken) {
+     const token = localStorage.getItem('token');
+   
+     
+    if(!token) {
         alert("Önce giriş yapmalısınız!");
         return;
     }
 
     try {
-        const response = await fetch(`${API_URL}/applications`, {
-            headers: { 'Authorization': `Bearer ${userToken}` }
-        });
+       const response = await fetch('http://localhost:3000/send/applications/get', {
+        method: 'GET',
+         headers: {
+        'Authorization': `Bearer ${token}`
+    }
+});
         
-        const applications = await response.json();
+        const result = await response.json();
         const container = document.getElementById('apps-container');
         container.innerHTML = ""; 
-
+        const applications = result.data || [];
         if(applications.length === 0) {
             container.innerHTML = "<p>Henüz başvuru bulunmuyor.</p>";
             return;
@@ -132,13 +139,89 @@ async function getApplications() {
         applications.forEach(app => {
             container.innerHTML += `
                 <div class="app-item">
-                    <h3>${app.title}</h3>
-                    <p>${app.description}</p>
-                    <span class="badge">Durum: ${app.status || 'Beklemede'}</span>
+                    <h3>${app.baslik}</h3>
+                    <p>${app.icerik}</p>
+                    <span class="badge">Durum: ${app.durum || 'Beklemede'}</span>
                 </div>
             `;
         });
     } catch (error) {
         alert("Veriler çekilemedi.");
+    }
+}
+async function getAllApplications() {
+     const token = localStorage.getItem('token');
+   console.log("HAFIZADAKİ TOKEN NEDİR? ->", token); 
+    
+    if(!token || token === "undefined") {
+        console.error("KRAL DİKKAT: Token boş veya tanımsız geliyor!");
+        return;
+    }
+    if(!token) {
+        alert("Önce giriş yapmalısınız!");
+        return;
+    }
+
+    try {
+       const response = await fetch('http://localhost:3000/send/applications/allGet', {
+        method: 'GET',
+         headers: {
+        'Authorization': `Bearer ${token}`
+    }
+});
+        
+        const result = await response.json();
+        const container = document.getElementById('apps-container');
+        container.innerHTML = ""; 
+        const applications = result.data || [];
+        if(applications.length === 0) {
+            container.innerHTML = "<p>Henüz başvuru bulunmuyor.</p>";
+            return;
+        }
+
+        // Gelen verileri HTML kartlarına çevirip ekrana basıyoruz
+       // Gelen verileri dönerken (forEach içinde):
+   applications.forEach(app => {
+    container.innerHTML += `
+        <div class="app-item">
+            <h3>${app.baslik} (Vatandaş: ${app.ad_soyad})</h3>
+            <p>${app.icerik}</p>
+            <p>Durum: <strong>${app.durum}</strong></p>
+            
+            <div class="actions">
+                <button class="btn-onay" onclick="updateStatus(${app.id}, 'Onaylandı')">✅ Onayla</button>
+                <button class="btn-red" onclick="updateStatus(${app.id}, 'Reddedildi')">❌ Reddet</button>
+            </div>
+        </div>
+    `;
+});
+    } catch (error) {
+        alert("Veriler çekilemedi.");
+    }
+}
+async function updateStatus(appId, newStatus) {
+    const token = localStorage.getItem('token');
+
+    try {
+        const response = await fetch(`http://localhost:3000/send/applications/update/${appId}`, {
+            method: 'PATCH', 
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ durum: newStatus })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Durum güncellendi usta!");
+            getApplications(); // Listeyi yenile ki değişiklik ekrana yansısın
+        } else {
+            alert("Hata: " + result.message);
+        }
+    } catch (error) {
+        console.error("Güncelleme hatası:", error);
+        alert("Bağlantı hatası oluştu.");
     }
 }
