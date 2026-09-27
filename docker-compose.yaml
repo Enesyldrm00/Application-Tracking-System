@@ -1,0 +1,31 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+    - DB_USER=${DB_USER}
+    - DB_HOST=db
+    - DB_NAME=${DB_NAME}
+    - DB_PASSWORD=${DB_PASSWORD}
+    - DB_PORT=${DB_PORT}
+    - SECRET_KEY=${SECRET_KEY}
+    depends_on:
+      - db
+    restart: always
+  db:
+    image: postgres:15-alpine
+    restart: always
+
+    shm_size: 128mb
+  
+    environment:
+      POSTGRES_USER: ${DB_USER}        # Backend ile aynı kullanıcı
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}          # Backend'in bağlanacağı veritabanı adı
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  pgdata:
